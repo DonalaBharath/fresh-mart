@@ -13,6 +13,13 @@ const transporter = nodemailer.createTransport({
     pass: process.env.BREVO_SMTP_PASS,
   },
 });
+transporter.verify((error, success) => {
+  if (error) {
+    console.log("SMTP Error:", error);
+  } else {
+    console.log("SMTP Server Ready");
+  }
+});
 
 const sendOtpEmail = async ({ to, fullName, otp }) => {
   try {
