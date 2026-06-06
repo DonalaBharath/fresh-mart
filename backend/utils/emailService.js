@@ -1,74 +1,91 @@
-
-
-
-const nodemailer = require("nodemailer");
-
-
-const transporter = nodemailer.createTransport({
-  host: "smtp-relay.brevo.com",
-  port: 465,
-  secure: true,
-  auth: {
-    user: process.env.BREVO_SMTP_USER,
-    pass: process.env.BREVO_SMTP_PASS,
-  },
-});
-transporter.verify((error, success) => {
-  if (error) {
-    console.log("SMTP Error:", error);
-  } else {
-    console.log("SMTP Server Ready");
-  }
-});
+const axios = require("axios");
 
 const sendOtpEmail = async ({ to, fullName, otp }) => {
   try {
-    const info = await transporter.sendMail({
-      from: "Freshmart<bharathkumarsriramulu005@gmail.com>",
-      to,
-      subject: "Fresh Mart OTP Verification",
-      html: `
-        <h2>Hello ${fullName}</h2>
-        <p>Your OTP is:</p>
-        <h1>${otp}</h1>
-        <p>This OTP will expire in 5 minutes.</p>
-      `,
-    });
+    await axios.post(
+      "https://api.brevo.com/v3/smtp/email",
+      {
+        sender: {
+          name: "FreshMart",
+          email: "FreshMartvegetables90@gmail.com",
+        },
+        to: [
+          {
+            email: to,
+            name: fullName,
+          },
+        ],
+        subject: "Fresh Mart OTP Verification",
+        htmlContent: `
+          <h2>Hello ${fullName}</h2>
+          <p>Your OTP is:</p>
+          <h1>${otp}</h1>
+          <p>This OTP will expire in 5 minutes.</p>
+        `,
+      },
+      {
+        headers: {
+          "api-key": process.env.BREVO_API_KEY,
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
-    console.log("OTP Email Sent:", info.messageId);
+    console.log("OTP Email Sent Successfully");
   } catch (error) {
-    console.log("Email Error:", error);
+    console.log(
+      "Brevo OTP Error:",
+      error.response?.data || error.message
+    );
     throw error;
   }
 };
- const sendContactEmail = async ({
+
+const sendContactEmail = async ({
   name,
   email,
   message,
 }) => {
   try {
-    await transporter.sendMail({
-      from: "Freshmart <bharathkumarsriramulu005@gmail.com>",
+    await axios.post(
+      "https://api.brevo.com/v3/smtp/email",
+      {
+        sender: {
+          name: "FreshMart",
+          email: "FreshMartvegetables90@gmail.com",
+        },
+        to: [
+          {
+            email: "FreshMartvegetables90@gmail.com",
+          },
+        ],
+        subject: "New Contact Message",
+        htmlContent: `
+          <h2>New Contact Message</h2>
 
-      to: "FreshMartvegetables90@gmail.com",
+          <p><b>Name:</b> ${name}</p>
 
-      subject: "New Contact Message",
+          <p><b>Email:</b> ${email}</p>
 
-      html: `
-        <h2>New Contact Message</h2>
+          <p><b>Message:</b></p>
 
-        <p><b>Name:</b> ${name}</p>
+          <p>${message}</p>
+        `,
+      },
+      {
+        headers: {
+          "api-key": process.env.BREVO_API_KEY,
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
-        <p><b>Email:</b> ${email}</p>
-
-        <p><b>Message:</b></p>
-
-        <p>${message}</p>
-      `,
-    });
-
+    console.log("Contact Email Sent Successfully");
   } catch (error) {
-    console.log(error);
+    console.log(
+      "Brevo Contact Error:",
+      error.response?.data || error.message
+    );
     throw error;
   }
 };
