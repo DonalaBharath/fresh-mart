@@ -7,7 +7,7 @@ const sendOtpEmail = async ({ to, fullName, otp }) => {
       {
         sender: {
           name: "FreshMart",
-          email: "FreshMartvegetables90@gmail.com",
+          email: "freshmartvegetables90@gmail.com",
         },
         to: [
           {
@@ -52,11 +52,11 @@ const sendContactEmail = async ({
       {
         sender: {
           name: "FreshMart",
-          email: "FreshMartvegetables90@gmail.com",
+          email: "freshmartvegetables90@gmail.com",
         },
         to: [
           {
-            email: "FreshMartvegetables90@gmail.com",
+            email: "freshmartvegetables90@gmail.com",
           },
         ],
         subject: "New Contact Message",
